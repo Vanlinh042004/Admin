@@ -7,6 +7,8 @@ import ClassPage from "./pages/ClassPage";
 import UsersPage from "./pages/UsersPage";
 import TutorPage from "./pages/TutorPage";
 import SettingsPage from "./pages/SettingsPage";
+import EditProfilePage from "./pages/EditProfilePage";
+import ChangePasswordPage from "./pages/ChangePasswordPage";
 
 function App() {
 	return (
@@ -24,6 +26,8 @@ function App() {
 				<Route path='/tutor' element={<TutorPage />} />
 				<Route path='/users' element={<UsersPage />} />
 				<Route path='/settings' element={<SettingsPage />} />
+				<Route path="/settings/edit_profile" element={<EditProfilePage />} />
+				<Route path="/settings/change_password" element={<ChangePasswordPage />} />
 			</Routes>
 		</div>
 	);
