@@ -1,40 +1,34 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
-import { Search, Eye } from "lucide-react";
+import { Search } from "lucide-react";
+import {  Trash2 } from "lucide-react";
 
-const orderData = [
-	{ id: "ORD001", customer: "John Doe", total: 235.4, status: "Delivered", date: "2023-07-01" },
-	{ id: "ORD002", customer: "Jane Smith", total: 412.0, status: "Processing", date: "2023-07-02" },
-	{ id: "ORD003", customer: "Bob Johnson", total: 162.5, status: "Shipped", date: "2023-07-03" },
-	{ id: "ORD004", customer: "Alice Brown", total: 750.2, status: "Pending", date: "2023-07-04" },
-	{ id: "ORD005", customer: "Charlie Wilson", total: 95.8, status: "Delivered", date: "2023-07-05" },
-	{ id: "ORD006", customer: "Eva Martinez", total: 310.75, status: "Processing", date: "2023-07-06" },
-	{ id: "ORD007", customer: "David Lee", total: 528.9, status: "Shipped", date: "2023-07-07" },
-	{ id: "ORD008", customer: "Grace Taylor", total: 189.6, status: "Delivered", date: "2023-07-08" },
+const Tutor_Data = [
+	{ id: "gs1", name: "Man deotv", email: "123@gg.com", address: "Dam Doi 222222222 Ca Mau", spec: "Toan, Ly, Hoa",intro: "nguoi viet chim tay, cao to den hoi, thich kham qua va ham hoc hoi" },
 ];
 
 const OrdersTable = () => {
 	const [searchTerm, setSearchTerm] = useState("");
-	const [filteredOrders, setFilteredOrders] = useState(orderData);
+	const [filteredOrders, setFilteredOrders] = useState(Tutor_Data);
 
 	const handleSearch = (e) => {
 		const term = e.target.value.toLowerCase();
 		setSearchTerm(term);
-		const filtered = orderData.filter(
-			(order) => order.id.toLowerCase().includes(term) || order.customer.toLowerCase().includes(term)
+		const filtered = Tutor_Data.filter(
+			(order) => order.id.toLowerCase().includes(term) || order.name.toLowerCase().includes(term) || order.email.toLowerCase().includes(term)
 		);
 		setFilteredOrders(filtered);
 	};
 
 	return (
 		<motion.div
-			className='bg-gray-800 bg-opacity-50 backdrop-blur-md shadow-lg rounded-xl p-6 border border-gray-700'
+			className='bg-gray-800 bg-opacity-50 backdrop-blur-md shadow-lg mb-8 rounded-xl p-6 border border-gray-700'
 			initial={{ opacity: 0, y: 20 }}
 			animate={{ opacity: 1, y: 0 }}
 			transition={{ delay: 0.4 }}
 		>
 			<div className='flex justify-between items-center mb-6'>
-				<h2 className='text-xl font-semibold text-gray-100'>Order List</h2>
+				<h2 className='text-xl font-semibold text-gray-100'>Tutor List</h2>
 				<div className='relative'>
 					<input
 						type='text'
@@ -52,22 +46,22 @@ const OrdersTable = () => {
 					<thead>
 						<tr>
 							<th className='px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider'>
-								Order ID
+									ID
+								</th>
+							<th className='px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider'>
+								Name
 							</th>
 							<th className='px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider'>
-								Customer
+								Email
 							</th>
 							<th className='px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider'>
-								Total
+								Address
 							</th>
 							<th className='px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider'>
-								Status
+								Specialize
 							</th>
 							<th className='px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider'>
-								Date
-							</th>
-							<th className='px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider'>
-								Actions
+								Intro
 							</th>
 						</tr>
 					</thead>
@@ -80,34 +74,26 @@ const OrdersTable = () => {
 								animate={{ opacity: 1 }}
 								transition={{ duration: 0.3 }}
 							>
-								<td className='px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-100'>
+								<td className='px-6 py-4 whitespace-nowrap text-sm text-gray-100'>
 									{order.id}
 								</td>
-								<td className='px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-100'>
-									{order.customer}
+								<td className='px-6 py-4 whitespace-nowrap text-sm text-gray-100'>
+									{order.name}
 								</td>
-								<td className='px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-100'>
-									${order.total.toFixed(2)}
+								<td className='px-6 py-4 whitespace-nowrap text-sm text-gray-100'>
+									{order.email}
 								</td>
-								<td className='px-6 py-4 whitespace-nowrap text-sm text-gray-300'>
-									<span
-										className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
-											order.status === "Delivered"
-												? "bg-green-100 text-green-800"
-												: order.status === "Processing"
-												? "bg-yellow-100 text-yellow-800"
-												: order.status === "Shipped"
-												? "bg-blue-100 text-blue-800"
-												: "bg-red-100 text-red-800"
-										}`}
-									>
-										{order.status}
-									</span>
+								<td className='px-6 py-4 whitespace-normal text-sm text-gray-100 break-words w-[200px]'>
+									{order.address}
 								</td>
+								<td className='px-6 py-4 whitespace-nowrap text-sm text-gray-300'>{order.spec}</td>
+
+								<td className='px-6 py-4 whitespace-normal text-sm text-gray-300 break-words w-[200px]'>{order.intro}</td>
+
 								<td className='px-6 py-4 whitespace-nowrap text-sm text-gray-300'>{order.date}</td>
 								<td className='px-6 py-4 whitespace-nowrap text-sm text-gray-300'>
-									<button className='text-indigo-400 hover:text-indigo-300 mr-2'>
-										<Eye size={18} />
+									<button className='text-red-400 hover:text-red-300'>
+										<Trash2 size={18} />
 									</button>
 								</td>
 							</motion.tr>
