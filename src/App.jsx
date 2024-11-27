@@ -9,6 +9,8 @@ import SalesPage from "./pages/SalesPage";
 import OrdersPage from "./pages/OrdersPage";
 import AnalyticsPage from "./pages/AnalyticsPage";
 import SettingsPage from "./pages/SettingsPage";
+import EditProfilePage from "./pages/EditProfilePage";
+import ChangePasswordPage from "./pages/ChangePasswordPage";
 
 function App() {
 	return (
@@ -28,6 +30,8 @@ function App() {
 				<Route path='/orders' element={<OrdersPage />} />
 				<Route path='/analytics' element={<AnalyticsPage />} />
 				<Route path='/settings' element={<SettingsPage />} />
+				<Route path="/settings/edit_profile" element={<EditProfilePage />} />
+				<Route path="/settings/change_password" element={<ChangePasswordPage />} />
 			</Routes>
 		</div>
 	);
