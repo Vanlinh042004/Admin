@@ -1,13 +1,14 @@
-import { UserCheck, UserPlus, UsersIcon, UserX } from "lucide-react";
 import { motion } from "framer-motion";
 
 import Header from "../components/common/Header";
-import UsersTable from "../components/users/UsersTable";
 
-const UsersPage = () => {
+import ParentsTable from "../components/parents/ParentsTable";
+import ParentsReq from "../components/parents/RequestTable";
+
+const ProductsPage = () => {
   return (
     <div className="flex-1 overflow-auto relative z-10">
-      <Header title="Users" />
+      <Header title="Products" />
 
       <main className="max-w-7xl mx-auto py-6 px-4 lg:px-8">
         {/* STATS */}
@@ -18,9 +19,10 @@ const UsersPage = () => {
           transition={{ duration: 1 }}
         ></motion.div>
 
-        <UsersTable />
+        <ParentsReq />
+        <ParentsTable />
       </main>
     </div>
   );
 };
-export default UsersPage;
+export default ProductsPage;
