@@ -77,7 +77,7 @@ const TutorTable = ({ tutors, deleteTutor, openEditModal }) => {
                     <tbody className='divide divide-gray-700'>
                         {currentTutors.map((tutor) => (
                             <motion.tr
-                                key={tutor.id}
+                                key={tutor._id} // Changed from tutor.id to tutor._id for uniqueness
                                 initial={{ opacity: 0 }}
                                 animate={{ opacity: 1 }}
                                 transition={{ duration: 0.3 }}

@@ -1,92 +1,89 @@
+import { useState, useEffect } from "react"; // Added useEffect
+import { motion } from "framer-motion"; // Added framer-motion
+
 import React from "react";
 import Header from "../components/common/Header";
 import ViewCard from "../components/approve/ViewCard";
-
-const mockData = [
-  {
-    classId: 1,
-    parent_id: 101,
-    tutor_id: 201,
-    subject: "Toán học",
-    grade: "Lớp 5",
-    address: "Hà Nội, Quận Hai Bà Trưng",
-    salary: 3000000,
-    sessions: "8 buổi/tháng",
-    schedule: "Thứ 3 và Thứ 5, 18:00 - 20:00",
-    studentInfo: "Học sinh nữ, lớp 5A",
-    requirements: "Cần gia sư có kinh nghiệm dạy toán cho học sinh tiểu học.",
-    teachingMode: "offline",
-    contact: "0123456789",
-    sexTutor: "Nữ",
-    fee: 500000,
-    requestCount: 3,
-  },
-  {
-    classId: 2,
-    parent_id: 102,
-    tutor_id: 202,
-    subject: "Tiếng Anh",
-    grade: "Lớp 8",
-    address: "Hồ Chí Minh, Quận 1",
-    salary: 4500000,
-    sessions: "12 buổi/tháng",
-    schedule: "Thứ 2 và Thứ 4, 16:00 - 18:00",
-    studentInfo: "Học sinh nam, lớp 8B",
-    requirements: "Cần gia sư có khả năng giảng dạy tiếng Anh giao tiếp.",
-    teachingMode: "online",
-    contact: "0987654321",
-    sexTutor: "Nam",
-    fee: 600000,
-    requestCount: 2,
-  },
-  {
-    classId: 3,
-    parent_id: 103,
-    tutor_id: 203,
-    subject: "Lý thuyết máy",
-    grade: "Lớp 11",
-    address: "Đà Nẵng, Quận Hải Châu",
-    salary: 6000000,
-    sessions: "10 buổi/tháng",
-    schedule: "Thứ 7, Chủ Nhật, 09:00 - 11:00",
-    studentInfo: "Học sinh nữ, lớp 11C, cần luyện thi đại học",
-    requirements:
-      "Yêu cầu gia sư có chuyên môn vững về lý thuyết cơ bản và nâng cao.",
-    teachingMode: "offline",
-    contact: "0932123456",
-    sexTutor: "Nữ",
-    fee: 700000,
-    requestCount: 5,
-  },
-];
+import api from "../api"; // Import API instance
 
 const ApprovePage = () => {
+  const [registrations, setRegistrations] = useState([]); // Added state for registrations
+  const [classes, setClasses] = useState([]); // Existing state
+
+  useEffect(() => {
+    fetchRegistrations();
+  }, []);
+
+  // Fetch registrations data
+  const fetchRegistrations = async () => {
+    try {
+      const response = await api.get("/admin/course/register"); // Added leading '/'
+      console.log("API Response:", response.data); // Added logging for debugging
+      const registrationsData = response.data; // Updated based on new API response structure
+
+      if (!registrationsData || !Array.isArray(registrationsData)) { // Added validation
+        console.error("Registrations data is undefined or not an array.");
+        return;
+      }
+
+      // Fetch course details for each registration
+      const coursesPromises = registrationsData.map((reg) =>
+        api.get(`/admin/course/${reg.courseId}`) // Added leading '/'
+      );
+      const coursesResponses = await Promise.all(coursesPromises);
+      const coursesData = coursesResponses.map((res) => res.data.course);
+
+      // Combine registration with course details and calculate requestCount
+      const combinedData = registrationsData.map((reg, index) => ({
+        courseId: reg.courseId,
+        tutorId: reg.tutors.length > 0 ? reg.tutors[0].tutor._id : null, // Extracting tutorId from registration
+        subject: coursesData[index].subject,
+        grade: coursesData[index].grade,
+        address: coursesData[index].address,
+        salary: coursesData[index].salary,
+        sessions: coursesData[index].sessions,
+        schedule: coursesData[index].schedule,
+        requestCount: reg.tutors.length, // Count based on UserId from registration
+        registeredTutors: reg.tutors.map(t => t.tutor), // Added registeredTutors field
+        tutorIds: reg.tutors.map(t => t.tutor._id), // Add tutorIds array
+      }));
+
+      console.log("Combined Data:", combinedData); // Debugging combined data
+      setRegistrations(combinedData);
+    } catch (error) {
+      console.error("Error fetching registrations:", error);
+      // Handle error if needed
+    }
+  };
+
   return (
-    <div className="flex-1 bg-gray-900">
-      <Header title="Approve" />
-      <main className="mx-auto py-8 px-6 lg:px-10 overflow-auto max-h-screen">
-        <div className="grid grid-cols-2 gap-6">
-          {mockData.map((data) => (
+    <div className="flex-1 relative z-10 overflow-auto">
+      <Header title={"Approve"} />
+
+      <main className="max-w-7xl mx-auto py-6 px-4 lg:px-8">
+        <motion.div
+          className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5 }}
+        >
+          {registrations.map((reg) => (
             <ViewCard
-              key={data.id}
-              classId={data.classId}
-              parentsId={data.parent_id}
-              subject={data.subject}
-              grade={data.grade}
-              address={data.address}
-              salary={data.salary}
-              sessions={data.sessions}
-              schedule={data.schedule}
-              studentInfo={data.studentInfo}
-              requirements={data.requirements}
-              teachingMode={data.teachingMode}
-              contact={data.contact}
-              sexTutor={data.sexTutor}
-              fee={data.fee}
-              requestCount={data.requestCount}
+              key={reg.courseId}
+              classId={reg.courseId}
+              tutorIds={reg.tutorIds} // Pass tutorIds array
+              subject={reg.subject}
+              grade={reg.grade}
+              address={reg.address}
+              salary={reg.salary}
+              sessions={reg.sessions}
+              schedule={reg.schedule}
+              // ...other props...
+              requestCount={reg.requestCount} // Correctly counts registration requests
+              registeredTutors={reg.registeredTutors} // Pass registeredTutors to ViewCard
             />
           ))}
-        </div>
+        </motion.div>
       </main>
     </div>
   );

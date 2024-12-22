@@ -1,9 +1,11 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
+import { motion } from "framer-motion"; // Added framer-motion
 
 const ViewCard = ({
   classId,
-  parentsId,
+  tutorIds,
+  parentId, // Updated from tutorId to tutorIds
   subject,
   grade,
   address,
@@ -14,9 +16,10 @@ const ViewCard = ({
   requirements,
   teachingMode,
   contact,
-  sexTuror,
+  sexTutor,
   fee,
   requestCount,
+  registeredTutors, // Destructure registeredTutors from props
 }) => {
   const navigate = useNavigate();
 
@@ -24,7 +27,8 @@ const ViewCard = ({
     navigate(`/approve/${classId}`, {
       state: {
         classId,
-        parentsId,
+        tutorIds, // Pass tutorIds array
+        parentId,
         subject,
         grade,
         address,
@@ -35,36 +39,41 @@ const ViewCard = ({
         requirements,
         teachingMode,
         contact,
-        sexTuror,
+        sexTutor,
         fee,
         requestCount,
+        registeredTutors, // Pass registeredTutors via state
       },
     });
   };
 
   return (
-    <div
+    <motion.div
       onClick={handleClick}
-      className="p-6 bg-white border border-gray-300 shadow-md rounded-lg cursor-pointer hover:shadow-lg transition-all overflow-y-auto"
+      className="p-6 bg-gray-800 bg-opacity-50 backdrop-blur-md shadow-lg rounded-xl cursor-pointer hover:shadow-2xl transition-shadow duration-300 overflow-y-auto"
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 0.3 }}
     >
-      <h3 className="text-xl font-bold text-gray-800 mb-4">
+      <h3 className="text-xl font-bold text-white mb-4">
         Class ID: {classId}
       </h3>
 
-      <div className="mb-4">
-        <p className="text-sm text-gray-600">ID: {parentsId}</p>
-        <p className="text-sm text-gray-600">Subject: {subject}</p>
-        <p className="text-sm text-gray-600">Grade: {grade}</p>
-        <p className="text-sm text-gray-600">Address: {address}</p>
-        <p className="text-sm text-gray-600">Salary: {salary}</p>
+      <div className="mb-4 text-gray-300">
+        <p className="text-sm">Subject: {subject}</p>
+        <p className="text-sm">Grade: {grade}</p>
+        <p className="text-sm">Address: {address}</p>
+        <p className="text-sm">Salary: {salary}</p>
+        <p className="text-sm">Sessions: {sessions}</p>
+        <p className="text-sm">Schedule: {schedule}</p>
       </div>
 
       <div className="mt-4">
-        <p className="text-lg font-semibold text-white bg-blue-600 px-6 py-3 rounded-lg shadow-lg">
+        <p className="text-lg font-semibold text-blue-400">
           Requests: {requestCount}
         </p>
       </div>
-    </div>
+    </motion.div>
   );
 };
 

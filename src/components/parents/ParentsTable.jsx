@@ -1,54 +1,16 @@
 import { motion } from "framer-motion";
-import { Edit, Search, Trash2, Check } from "lucide-react";
-import { useState } from "react";
+import { Edit, Search, Trash2 } from "lucide-react";
 
-const DATA = [
-  {
-    id: 1,
-    name: "Nguyễn Văn A",
-    address: "123 Đường Lê Lợi, Quận 1, TP.HCM",
-    phone: "0901234567",
-  },
-  {
-    id: 2,
-    name: "Trần Thị B",
-    address: "456 Đường Hai Bà Trưng, Quận 3, TP.HCM",
-    phone: "0902345678",
-  },
-  {
-    id: 3,
-    name: "Lê Văn C",
-    address: "789 Đường Phạm Ngũ Lão, Quận 5, TP.HCM",
-    phone: "0903456789",
-  },
-  {
-    id: 4,
-    name: "Phạm Thị D",
-    address: "321 Đường Nguyễn Thị Minh Khai, Quận 10, TP.HCM",
-    phone: "0904567890",
-  },
-  {
-    id: 5,
-    name: "Hoàng Văn E",
-    address: "654 Đường Võ Thị Sáu, Quận Phú Nhuận, TP.HCM",
-    phone: "0905678901",
-  },
-];
-
-const Table = () => {
-  const [searchTerm, setSearchTerm] = useState("");
-  const [filteredProducts, setFilteredProducts] = useState(DATA);
-
-  const handleSearch = (e) => {
-    const term = e.target.value.toLowerCase();
-    setSearchTerm(term);
-    const filtered = DATA.filter((data) =>
-      data.name.toLowerCase().includes(term)
-    );
-
-    setFilteredProducts(filtered);
-  };
-
+const ParentsTable = ({
+  parents,
+  deleteParent,
+  openEditModal,
+  currentPage,
+  totalPages,
+  handlePageChange,
+  searchTerm,
+  handleSearch,
+}) => {
   return (
     <motion.div
       className="bg-gray-800 bg-opacity-50 backdrop-blur-md shadow-lg rounded-xl p-6 border border-gray-700 mb-8"
@@ -61,7 +23,7 @@ const Table = () => {
         <div className="relative">
           <input
             type="text"
-            placeholder="Search products..."
+            placeholder="Search parents..."
             className="bg-gray-700 text-white placeholder-gray-400 rounded-lg pl-10 pr-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
             onChange={handleSearch}
             value={searchTerm}
@@ -93,32 +55,38 @@ const Table = () => {
           </thead>
 
           <tbody className="divide-y divide-gray-700">
-            {filteredProducts.map((data) => (
+            {parents.map((parent) => (
               <motion.tr
-                key={data.id}
+                key={parent._id} // Ensure unique key
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 transition={{ duration: 0.3 }}
               >
                 <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-100 flex gap-2 items-center">
-                  {data.id}
+                  {parent._id}
                 </td>
 
                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-300">
-                  {data.name}
+                  {parent.name}
                 </td>
 
                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-300">
-                  {data.address}
+                  {parent.address}
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-300">
-                  {data.phone}
+                  {parent.phoneNumber}
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-300">
-                  <button className="text-indigo-400 hover:text-indigo-300 mr-2">
+                  <button
+                    className="text-indigo-400 hover:text-indigo-300 mr-2"
+                    onClick={() => openEditModal(parent)}
+                  >
                     <Edit size={18} />
                   </button>
-                  <button className="text-red-400 hover:text-red-300">
+                  <button
+                    className="text-red-400 hover:text-red-300"
+                    onClick={() => deleteParent(parent._id)}
+                  >
                     <Trash2 size={18} />
                   </button>
                 </td>
@@ -127,7 +95,46 @@ const Table = () => {
           </tbody>
         </table>
       </div>
+
+      {/* Pagination Controls */}
+      <div className="flex justify-center mt-4 space-x-2">
+        <button
+          onClick={() => handlePageChange(currentPage - 1)}
+          disabled={currentPage === 1}
+          className={`px-3 py-1 rounded ${
+            currentPage === 1
+              ? 'bg-gray-600 cursor-not-allowed'
+              : 'bg-gray-700 hover:bg-gray-600'
+          }`}
+        >
+          Previous
+        </button>
+        {Array.from({ length: totalPages }, (_, index) => index + 1).map(number => (
+          <button
+            key={number}
+            onClick={() => handlePageChange(number)}
+            className={`px-3 py-1 rounded ${
+              currentPage === number
+                ? 'bg-blue-600 text-white'
+                : 'bg-gray-700 hover:bg-gray-600'
+            }`}
+          >
+            {number}
+          </button>
+        ))}
+        <button
+          onClick={() => handlePageChange(currentPage + 1)}
+          disabled={currentPage === totalPages}
+          className={`px-3 py-1 rounded ${
+            currentPage === totalPages
+              ? 'bg-gray-600 cursor-not-allowed'
+              : 'bg-gray-700 hover:bg-gray-600'
+          }`}
+        >
+          Next
+        </button>
+      </div>
     </motion.div>
   );
 };
-export default Table;
+export default ParentsTable;
