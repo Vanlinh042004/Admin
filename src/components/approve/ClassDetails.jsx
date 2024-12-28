@@ -1,18 +1,24 @@
 import React, { useState, useEffect } from "react";
 import { useLocation } from "react-router-dom";
-import { Check, Trash2, Edit2 } from "lucide-react";
+import { Check } from "lucide-react";
 import { motion } from "framer-motion"; // Added framer-motion
 import api from "../../api"; // Import API instance
+import { useNavigate } from "react-router-dom"; // Added useNavigate
 
 const ClassDetails = () => {
   const { state } = useLocation();
+  const navigate = useNavigate(); // Initialized navigate
   const [tutorDetails, setTutorDetails] = useState([]); // Changed to array to store multiple tutors
   const [courseDetails, setCourseDetails] = useState(null);
   const [error, setError] = useState(null);
-
+  
 
   useEffect(() => {
-    if (state?.tutorIds && Array.isArray(state.tutorIds) && state.tutorIds.length > 0) { // Check for multiple tutorIds
+    if (
+      state?.tutorIds &&
+      Array.isArray(state.tutorIds) &&
+      state.tutorIds.length > 0
+    ) {
       fetchTutorDetails(state.tutorIds);
     }
     if (state?.classId) {
@@ -21,14 +27,31 @@ const ClassDetails = () => {
     // Removed fetchRegisteredTutors since data is passed via state
   }, [state]);
 
-  // Fetch tutor details for multiple tutorIds
+  // Fetch tutor details for multiple tutorIds and map registrationIds
   const fetchTutorDetails = async (tutorIds) => {
     try {
       // Fetch details for each tutorId
-      const tutorDetailsPromises = tutorIds.map(id => api.get(`/admin/tutor/${id}`));
+      const tutorDetailsPromises = tutorIds.map((id) =>
+        api.get(`/admin/tutor/${id}`)
+      );
       const tutorsResponses = await Promise.all(tutorDetailsPromises);
-      const tutorsData = tutorsResponses.map(res => res.data.tutor);
-      setTutorDetails(tutorsData);
+      const tutorsData = tutorsResponses.map((res) => res.data.tutor);
+
+      // Create a map of tutorId to registrationId from state.tutors
+      const registrationMap = {};
+      if (state?.tutors && Array.isArray(state.tutors)) {
+        state.tutors.forEach((tutor) => {
+          registrationMap[tutor._id] = tutor.registrationId;
+        });
+      }
+
+      // Combine tutor data with registrationId
+      const combinedTutors = tutorsData.map((tutor) => ({
+        ...tutor,
+        registrationId: registrationMap[tutor._id] || null, // Assign registrationId or null
+      }));
+
+      setTutorDetails(combinedTutors);
     } catch (err) {
       console.error("Error fetching tutor details:", err);
       setError("Failed to load tutor details.");
@@ -50,14 +73,21 @@ const ClassDetails = () => {
   };
 
   // Function to handle approving a tutor
-  const approveTutor = (tutorId) => {
-    // Implement approval logic here
-    console.log(`Approve tutor with ID: ${tutorId}`);
-    // Example: Call an API to approve the tutor
-    // api.put(`/admin/tutor/${tutorId}/approve`).then(response => { ... })
+  const approveTutor = async (registrationId) => {
+    try {
+      console.log("Approving tutor with registrationId:", registrationId); // Added logging
+      const response = await api.post("/admin/course/register", { registrationId }); // Call the approveRegister API
+      console.log(response.data.message);
+      // Optionally, update the UI or state after approval
+      setTutorDetails(
+        tutorDetails.filter((tutor) => tutor.registrationId !== registrationId)
+      ); // Remove approved tutor from the list
+      navigate('/approve'); // Redirect after approval
+    } catch (error) {
+      console.error("Error approving registration:", error);
+      // Handle error, e.g., show a notification to the user
+    }
   };
-
-  
 
   if (error) {
     return <div className="text-red-500">{error}</div>;
@@ -82,19 +112,23 @@ const ClassDetails = () => {
             <span className="font-semibold">Class ID:</span> {courseDetails._id}
           </p>
           <p>
-            <span className="font-semibold">Parent ID:</span> {courseDetails.parent_id} 
+            <span className="font-semibold">Parent ID:</span>{" "}
+            {courseDetails.parent_id}
           </p>
           <p>
-            <span className="font-semibold">Subject:</span> {courseDetails.subject}
+            <span className="font-semibold">Subject:</span>{" "}
+            {courseDetails.subject}
           </p>
           <p>
             <span className="font-semibold">Grade:</span> {courseDetails.grade}
           </p>
           <p>
-            <span className="font-semibold">Address:</span> {courseDetails.address}
+            <span className="font-semibold">Address:</span>{" "}
+            {courseDetails.address}
           </p>
           <p>
-            <span className="font-semibold">Salary:</span> {courseDetails.salary}
+            <span className="font-semibold">Salary:</span>{" "}
+            {courseDetails.salary}
           </p>
           <p>
             <span className="font-semibold">Fee:</span> {courseDetails.fee}
@@ -103,10 +137,12 @@ const ClassDetails = () => {
 
         <div className="space-y-2">
           <p>
-            <span className="font-semibold">Sessions:</span> {courseDetails.sessions}
+            <span className="font-semibold">Sessions:</span>{" "}
+            {courseDetails.sessions}
           </p>
           <p>
-            <span className="font-semibold">Schedule:</span> {courseDetails.schedule}
+            <span className="font-semibold">Schedule:</span>{" "}
+            {courseDetails.schedule}
           </p>
           <p>
             <span className="font-semibold">Student Info:</span>{" "}
@@ -121,7 +157,8 @@ const ClassDetails = () => {
             {courseDetails.teachingMode}
           </p>
           <p>
-            <span className="font-semibold">Contact:</span> {courseDetails.contact}
+            <span className="font-semibold">Contact:</span>{" "}
+            {courseDetails.contact}
           </p>
           <p>
             <span className="font-semibold">Sex of Tutor:</span>{" "}
@@ -160,32 +197,34 @@ const ClassDetails = () => {
             </tr>
           </thead>
           <tbody className="bg-gray-800 divide-y divide-gray-700">
-            {tutorDetails.map(tutor => (
-              <tr key={tutor._id} className="hover:bg-gray-700">
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-100">
-                  {tutor.name}
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-100">
-                  {tutor.phoneNumber}
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-100">
-                  {tutor.address}
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-100">
-                  {tutor.specialization}
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-100">
-                  <button
-                    onClick={() => approveTutor(tutor._id)}
-                    className="text-green-400 hover:text-green-300 mr-2"
-                    title="Approve Tutor"
-                  >
-                    <Check size={20} />
-                  </button>
-                  
-                </td>
-              </tr>
-            ))}
+            {tutorDetails.map((tutor) => {
+              console.log("Tutor Object:", tutor);
+              return (
+                <tr key={tutor._id} className="hover:bg-gray-700">
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-100">
+                    {tutor.name}
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-100">
+                    {tutor.phoneNumber}
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-100">
+                    {tutor.address}
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-100">
+                    {tutor.specialization}
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-100">
+                    <button
+                      onClick={() => approveTutor(tutor.registrationId)} // Pass registrationId
+                      className="text-green-400 hover:text-green-300 mr-2"
+                      title="Approve Tutor"
+                    >
+                      <Check size={20} />
+                    </button>
+                  </td>
+                </tr>
+              );
+            })}
           </tbody>
         </table>
       </motion.div>

@@ -20,6 +20,7 @@ const ViewCard = ({
   fee,
   requestCount,
   registeredTutors, // Destructure registeredTutors from props
+  isApproved, 
 }) => {
   const navigate = useNavigate();
 
@@ -42,7 +43,7 @@ const ViewCard = ({
         sexTutor,
         fee,
         requestCount,
-        registeredTutors, // Pass registeredTutors via state
+        tutors: registeredTutors, // Pass registeredTutors via state
       },
     });
   };
@@ -50,7 +51,9 @@ const ViewCard = ({
   return (
     <motion.div
       onClick={handleClick}
-      className="p-6 bg-gray-800 bg-opacity-50 backdrop-blur-md shadow-lg rounded-xl cursor-pointer hover:shadow-2xl transition-shadow duration-300 overflow-y-auto"
+      className={`p-6 bg-gray-800 bg-opacity-50 backdrop-blur-md shadow-lg rounded-xl cursor-pointer hover:shadow-2xl transition-shadow duration-300 overflow-y-auto ${
+        isApproved ? "border-2 border-green-500" : ""
+      }`}
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       transition={{ duration: 0.3 }}
@@ -69,9 +72,14 @@ const ViewCard = ({
       </div>
 
       <div className="mt-4">
-        <p className="text-lg font-semibold text-blue-400">
-          Requests: {requestCount}
-        </p>
+        {!isApproved && (
+          <p className="text-lg font-semibold text-blue-400">
+            Requests: {requestCount}
+          </p>
+        )}
+        {isApproved && (
+          <p className="text-sm text-green-400">Approved Recently</p>
+        )}
       </div>
     </motion.div>
   );
