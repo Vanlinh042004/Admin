@@ -3,9 +3,9 @@ import {
   Menu,
   School,
   GraduationCap,
-  Users,
   UserCheck,
   ContactRound,
+  MessageCircle,
 } from "lucide-react";
 import { useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
@@ -15,8 +15,8 @@ const SIDEBAR_ITEMS = [
   { name: "Class", icon: School, color: "#8B5CF6", href: "/class" },
   { name: "Tutor", icon: GraduationCap, color: "#F59E0B", href: "/tutor" },
   { name: "Parents", icon: ContactRound, color: "#6B57B7", href: "/parent" },
-  { name: "Users", icon: Users, color: "#EC4899", href: "/users" },
   { name: "Approve", icon: UserCheck, color: "#6EE7B7", href: "/approve" },
+  { name: "Chat", icon: MessageCircle, color: "#F472B6", href: "/chat" },
 ];
 
 const Sidebar = () => {

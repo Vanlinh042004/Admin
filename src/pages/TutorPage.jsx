@@ -1,8 +1,6 @@
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-
 import Header from "../components/common/Header";
-import RequestTable from "../components/tutor/RequestTable";
 import TutorTable from "../components/tutor/TutorTable";
 import EditTutor from "../components/tutor/EditTutor"; // Import EditTutor component
 import api from "../api"; // Import API instance
@@ -44,34 +42,6 @@ const TutorPage = () => {
       setApprovedTutors(approved);
     } catch (error) {
       console.error("Error fetching tutors:", error);
-      // Xử lý lỗi nếu cần
-    }
-  };
-
-  // Hàm duyệt gia sư
-  const approveTutor = async (id) => {
-    try {
-      const response = await api.put(`/admin/tutor/${id}/approve`);
-      console.log(
-        `Tutor with ID ${id} approved successfully:`,
-        response.data.message
-      );
-      // Cập nhật trạng thái gia sư trong allTutors
-      const updatedTutors = allTutors.map((tutor) =>
-        tutor.id === id ? { ...tutor, status: "Đã duyệt" } : tutor
-      );
-      setAllTutors(updatedTutors);
-      // Lọc lại các danh sách sau khi cập nhật
-      const requests = updatedTutors.filter(
-        (tutor) => tutor.status === "Chưa duyệt"
-      );
-      const approved = updatedTutors.filter(
-        (tutor) => tutor.status === "Đã duyệt"
-      );
-      setRequestTutors(requests);
-      setApprovedTutors(approved);
-    } catch (error) {
-      console.error(`Error approving tutor with ID ${id}:`, error);
       // Xử lý lỗi nếu cần
     }
   };
@@ -159,13 +129,6 @@ const TutorPage = () => {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 1 }}
         ></motion.div>
-
-        <RequestTable
-          tutors={requestTutors}
-          approveTutor={approveTutor}
-          deleteTutor={deleteTutor}
-          openEditModal={openEditModal}
-        />
         <TutorTable
           tutors={approvedTutors}
           deleteTutor={deleteTutor}

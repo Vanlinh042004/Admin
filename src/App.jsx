@@ -4,13 +4,13 @@ import { Route, Routes, Navigate } from "react-router-dom";
 
 import Sidebar from "./components/common/Sidebar";
 import ClassPage from "./pages/ClassPage";
-import UsersPage from "./pages/UsersPage";
 import TutorPage from "./pages/TutorPage";
 import ApprovePage from "./pages/ApprovePage";
 import LoginPage from "./pages/LoginPage";
 import ParentPage from "./pages/ParentPage";
 import EditClass from "./components/class/EditClass";
 import ClassDetails from "./components/approve/ClassDetails";
+import Chat from "./pages/Chat";
 
 function parseJwt(token) {
   try {
@@ -65,10 +65,10 @@ function App() {
                 <Route path="/class" element={<ClassPage />} />
                 <Route path="/classes/edit/:id" element={<EditClass />} />
                 <Route path="/tutor" element={<TutorPage />} />
-                <Route path="/users" element={<UsersPage />} />
                 <Route path="/approve" element={<ApprovePage />} />
                 <Route path="/parent" element={<ParentPage />} />
                 <Route path="/approve/:id" element={<ClassDetails />} />
+                <Route path="/chat" element={<Chat />} />
               </Routes>
             </PrivateRoute>
           }
