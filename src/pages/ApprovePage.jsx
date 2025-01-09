@@ -54,7 +54,7 @@ const ApprovePage = () => {
             ...t.tutor,
             registrationId: t.registrationId, // Include registrationId with tutor details
           })),
-          tutorIds: reg.tutors.map((t) => t.tutor._id), // Array of tutor IDs
+          tutorIds: reg.tutors.map((t) => t.tutor ? t.tutor._id : null), // Array of tutor IDs
           registrationIds: reg.tutors.map((t) => t.registrationId), // Array of registration IDs
           isApproved: isApproved, // Approval status based on course.tutor_id
         };
