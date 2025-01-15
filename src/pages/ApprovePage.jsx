@@ -38,7 +38,8 @@ const ApprovePage = () => {
       // Combine registration with course details and determine approval status
       const combinedData = registrationsData.map((reg, index) => {
         const course = coursesData[index];
-        const isApproved = course.tutor_id !== null; // Determine approval based on tutor_id
+        console.log(`Registration ID: ${reg.courseId}, Status: ${reg.status}`); // Log status for debugging
+        const isApproved = reg.status === "Chờ thanh toán"; // Determine approval based on registration status
 
         return {
           courseId: reg.courseId,
@@ -56,7 +57,8 @@ const ApprovePage = () => {
           })),
           tutorIds: reg.tutors.map((t) => t.tutor ? t.tutor._id : null), // Array of tutor IDs
           registrationIds: reg.tutors.map((t) => t.registrationId), // Array of registration IDs
-          isApproved: isApproved, // Approval status based on course.tutor_id
+          status: reg.status, // Include status for filtering
+          isApproved: isApproved, // Approval status based on registration status
         };
       });
 
@@ -64,8 +66,8 @@ const ApprovePage = () => {
       setRegistrations(combinedData);
 
       // Separate pending and approved registrations
-      const pending = combinedData.filter((reg) => !reg.isApproved);
-      const approved = combinedData.filter((reg) => reg.isApproved);
+      const pending = combinedData.filter((reg) => reg.status === "Chờ duyệt");
+      const approved = combinedData.filter((reg) => reg.status === "Chờ thanh toán");
 
       setPendingRegistrations(pending);
       setApprovedRegistrations(approved);
