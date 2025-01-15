@@ -12,6 +12,7 @@ import EditClass from "./components/class/EditClass";
 import ClassDetails from "./components/approve/ClassDetails";
 import Chat from "./pages/Chat";
 
+
 function parseJwt(token) {
   try {
     const base64Url = token.split(".")[1];
@@ -69,6 +70,7 @@ function App() {
                 <Route path="/parent" element={<ParentPage />} />
                 <Route path="/approve/:id" element={<ClassDetails />} />
                 <Route path="/chat" element={<Chat />} />
+               
               </Routes>
             </PrivateRoute>
           }
