@@ -10,3 +10,9 @@ npm install
 
 ```bash
 npm run dev
+```
+3. Đăng nhập
+```bash
+admin@gmail.com
+1234
+``
