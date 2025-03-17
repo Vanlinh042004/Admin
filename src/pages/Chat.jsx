@@ -16,18 +16,27 @@ const Chat = () => {
     if (!token) {
       console.error("No token found in sessionStorage");
     }
-    const newSocket = io("http://localhost:5000", {
+    const newSocket = io("https://tutorprosite-k22-1.onrender.com", {
       auth: { token },
       transports: ["websocket"], // Ưu tiên WebSocket
     });
-
+    // const newSocket = io("http://localhost:5000", {
+    //   auth: { token },
+    //   transports: ["websocket"], // Ưu tiên WebSocket
+    // });
     setSocket(newSocket);
 
     // Lắng nghe sự kiện tải danh sách tin nhắn
     newSocket.on("recent-messages", (recentMessages) => {
       if (Array.isArray(recentMessages)) {
-        const filteredMessages = filterMessagesForAdmin(recentMessages, adminId);
-        const groupedChatRooms = groupMessagesByChatRoom(filteredMessages, adminId);
+        const filteredMessages = filterMessagesForAdmin(
+          recentMessages,
+          adminId
+        );
+        const groupedChatRooms = groupMessagesByChatRoom(
+          filteredMessages,
+          adminId
+        );
         setChatRooms(groupedChatRooms);
       } else {
         console.error("Invalid message data:", recentMessages);
@@ -43,8 +52,10 @@ const Chat = () => {
 
         if (updatedChatRooms[newMessage.chatRoomId]) {
           updatedChatRooms[newMessage.chatRoomId].messages.push(newMessage);
-          updatedChatRooms[newMessage.chatRoomId].lastMessage = newMessage.content;
-          updatedChatRooms[newMessage.chatRoomId].timestamp = newMessage.timestamp;
+          updatedChatRooms[newMessage.chatRoomId].lastMessage =
+            newMessage.content;
+          updatedChatRooms[newMessage.chatRoomId].timestamp =
+            newMessage.timestamp;
         } else {
           const userId = getUserTitleFromChatRoomId(
             newMessage.chatRoomId,
@@ -112,7 +123,8 @@ const Chat = () => {
           updatedChatRooms[selectedUser.chatRoomId].messages.push(newMessage);
           updatedChatRooms[selectedUser.chatRoomId].lastMessage =
             messageContent;
-          updatedChatRooms[selectedUser.chatRoomId].timestamp = new Date().toISOString();
+          updatedChatRooms[selectedUser.chatRoomId].timestamp =
+            new Date().toISOString();
         }
         return updatedChatRooms;
       });
@@ -129,7 +141,8 @@ const Chat = () => {
   // Lọc tin nhắn liên quan đến admin
   const filterMessagesForAdmin = (messages, adminId) => {
     return messages.filter(
-      (message) => message.senderId === adminId || message.receiverId === adminId
+      (message) =>
+        message.senderId === adminId || message.receiverId === adminId
     );
   };
 

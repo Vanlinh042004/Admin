@@ -2,7 +2,7 @@
 import axios from "axios";
 
 const api = axios.create({
-  baseURL: "http://localhost:5000", // Ensure this is the correct backend URL
+  baseURL: "https://tutorprosite-k22-1.onrender.com", // Ensure this is the correct backend URL
 });
 
 // Request interceptor to add the token to headers
